@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Тест интеграции ElevenLabs Agent</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .config-section {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4299e1;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus, input[type="password"]:focus {
+            outline: none;
+            border-color: #4299e1;
+        }
+        
+        .test-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .test-btn {
+            padding: 15px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .test-btn.primary {
+            background: #4299e1;
+            color: white;
+        }
+        
+        .test-btn.primary:hover {
+            background: #3182ce;
+            transform: translateY(-2px);
+        }
+        
+        .test-btn.secondary {
+            background: #48bb78;
+            color: white;
+        }
+        
+        .test-btn.secondary:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+        }
+        
+        .test-btn.danger {
+            background: #f56565;
+            color: white;
+        }
+        
+        .test-btn.danger:hover {
+            background: #e53e3e;
+            transform: translateY(-2px);
+        }
+        
+        .results {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+        
+        .status.success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+        
+        .status.error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #feb2b2;
+        }
+        
+        .status.info {
+            background: #bee3f8;
+            color: #2a4365;
+            border: 1px solid #90cdf4;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Тест интеграции ElevenLabs Agent</h1>
+        
+        <div class="config-section">
+            <h3>⚙️ Конфигурация</h3>
+            <div class="form-group">
+                <label for="serverUrl">URL сервера:</label>
+                <input type="text" id="serverUrl" value="http://localhost:8001" placeholder="http://localhost:8001">
+            </div>
+            <div class="form-group">
+                <label for="phoneNumber">Номер телефона для теста:</label>
+                <input type="text" id="phoneNumber" value="+79001234567" placeholder="+79001234567">
+            </div>
+            <div class="form-group">
+                <label for="agentId">Agent ID:</label>
+                <input type="text" id="agentId" placeholder="Введите ваш Agent ID">
+            </div>
+            <div class="form-group">
+                <label for="apiKey">API Key:</label>
+                <input type="password" id="apiKey" placeholder="Введите ваш API Key">
+            </div>
+            <div class="form-group">
+                <label for="voiceId">Voice ID:</label>
+                <input type="text" id="voiceId" value="21m00Tcm4TlvDq8ikWAM" placeholder="21m00Tcm4TlvDq8ikWAM">
+            </div>
+        </div>
+        
+        <div class="test-buttons">
+            <button class="test-btn primary" onclick="testServer()">
+                🔍 Тест сервера
+            </button>
+            <button class="test-btn secondary" onclick="testAgent()">
+                🎭 Тест Agent
+            </button>
+            <button class="test-btn secondary" onclick="testConversation()">
+                💬 Тест диалога
+            </button>
+            <button class="test-btn primary" onclick="testCall()">
+                📞 Тест вызова
+            </button>
+            <button class="test-btn danger" onclick="runAllTests()">
+                🧪 Все тесты
+            </button>
+        </div>
+        
+        <div id="results" class="results" style="display: none;">
+            <div id="resultsContent"></div>
+        </div>
+    </div>
+
+    <script>
+        function showResults(content, type = 'info') {
+            const results = document.getElementById('results');
+            const resultsContent = document.getElementById('resultsContent');
+            
+            const timestamp = new Date().toLocaleTimeString();
+            const statusClass = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            
+            resultsContent.innerHTML += `
+                <div class="status ${statusClass}">
+                    [${timestamp}] ${content}
+                </div>
+            `;
+            
+            results.style.display = 'block';
+            results.scrollTop = results.scrollHeight;
+        }
+        
+        function getConfig() {
+            return {
+                serverUrl: document.getElementById('serverUrl').value,
+                phoneNumber: document.getElementById('phoneNumber').value,
+                agentId: document.getElementById('agentId').value,
+                apiKey: document.getElementById('apiKey').value,
+                voiceId: document.getElementById('voiceId').value
+            };
+        }
+        
+        async function makeRequest(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                const data = await response.text();
+                return { status: response.status, data, ok: response.ok };
+            } catch (error) {
+                return { status: 0, data: error.message, ok: false };
+            }
+        }
+        
+        async function testServer() {
+            const config = getConfig();
+            showResults('🔍 Тестирование сервера...', 'info');
+            
+            const result = await makeRequest(`${config.serverUrl}/health`);
+            
+            if (result.ok) {
+                showResults(`✅ Сервер доступен (${result.status}): ${result.data}`, 'success');
+            } else {
+                showResults(`❌ Сервер недоступен: ${result.data}`, 'error');
+            }
+        }
+        
+        async function testAgent() {
+            const config = getConfig();
+            if (!config.agentId || !config.apiKey) {
+                showResults('❌ Укажите Agent ID и API Key', 'error');
+                return;
+            }
+            
+            showResults('🎭 Тестирование ElevenLabs Agent...', 'info');
+            
+            const result = await makeRequest(`https://api.elevenlabs.io/v1/agent/${config.agentId}`, {
+                headers: {
+                    'xi-api-key': config.apiKey
+                }
+            });
+            
+            if (result.ok) {
+                showResults(`✅ Agent доступен (${result.status}): ${result.data}`, 'success');
+            } else {
+                showResults(`❌ Agent недоступен (${result.status}): ${result.data}`, 'error');
+            }
+        }
+        
+        async function testConversation() {
+            const config = getConfig();
+            if (!config.agentId || !config.apiKey) {
+                showResults('❌ Укажите Agent ID и API Key', 'error');
+                return;
+            }
+            
+            showResults('💬 Тестирование диалога с Agent...', 'info');
+            
+            const sessionId = `test_session_${Date.now()}`;
+            const result = await makeRequest(`https://api.elevenlabs.io/v1/agent/${config.agentId}/conversation`, {
+                method: 'POST',
+                headers: {
+                    'xi-api-key': config.apiKey
+                },
+                body: JSON.stringify({
+                    session_id: sessionId,
+                    message_type: "greeting",
+                    message: "",
+                    voice_id: config.voiceId
+                })
+            });
+            
+            if (result.ok) {
+                showResults(`✅ Диалог успешен (${result.status}): ${result.data}`, 'success');
+            } else {
+                showResults(`❌ Ошибка диалога (${result.status}): ${result.data}`, 'error');
+            }
+        }
+        
+        async function testCall() {
+            const config = getConfig();
+            if (!config.agentId || !config.apiKey) {
+                showResults('❌ Укажите Agent ID и API Key', 'error');
+                return;
+            }
+            
+            showResults('📞 Тестирование инициации вызова...', 'info');
+            
+            const callData = {
+                phone: config.phoneNumber,
+                agent_id: config.agentId,
+                api_key: config.apiKey,
+                voice_id: config.voiceId,
+                webhook_url: `${config.serverUrl}/call-results`
+            };
+            
+            const result = await makeRequest(`${config.serverUrl}/initiate-call`, {
+                method: 'POST',
+                body: JSON.stringify(callData)
+            });
+            
+            if (result.ok) {
+                showResults(`✅ Вызов инициирован (${result.status}): ${result.data}`, 'success');
+            } else {
+                showResults(`❌ Ошибка инициации вызова (${result.status}): ${result.data}`, 'error');
+            }
+        }
+        
+        async function runAllTests() {
+            showResults('🧪 Запуск всех тестов...', 'info');
+            
+            await testServer();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            await testAgent();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            await testConversation();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            await testCall();
+            
+            showResults('🎉 Все тесты завершены!', 'success');
+        }
+    </script>
+</body>
+</html>
